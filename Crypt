@@ -1,0 +1,105 @@
+import java.util.Scanner;
+
+public class Cryptography {
+    public static void main(String[]args) {
+        Scanner in = new Scanner(System.in);
+        String result = "";
+        String alphabet = "abcdefghijklmnñopqrstuvwxyz";
+        System.out.print("Do you want to encode or decode? ");
+        String oper = in.nextLine();
+        System.out.print("Caesar or Vigenere algorithm? ");
+        String alg = in.nextLine();
+        System.out.print("Please enter the message: ");
+        String message = in.nextLine();
+        message = message.toLowerCase();
+        System.out.println("Please enter the key: ");
+        if (alg.contains("a")) {
+            System.out.print("Number between 0 and 26: ");
+            int keynum = in.nextInt();
+            if (oper.contains("nc")) {
+                result = encCae(message, alphabet, keynum);
+            }
+            else {
+                result = decCae(message, alphabet, keynum);
+            }
+        }
+        else {
+            String keystr = in.nextLine();
+            keystr = keystr.toLowerCase();
+            if (oper.contains("nc")) {
+                result = encVig(message, alphabet, keystr);
+            }
+            else {
+                result = decVig(message, alphabet, keystr);
+            }
+        }
+        System.out.println(result);
+    }
+
+    public static char offset(char ch, String alph, int off) {
+        char subch;
+        if (alph.indexOf(ch) != -1) {
+            int pos = alph.indexOf(ch) + off;
+            if (pos >= alph.length()) {
+                pos -= alph.length();
+            }
+            subch = alph.charAt(pos);
+        }
+        else {
+            subch = ch;
+        }
+        return subch;
+    }
+    
+    public static String encCae(String mess, String alph, int key) {
+        String output = "";
+        for (int i = 0; i < mess.length(); i++) {
+            output += offset(mess.charAt(i), alph, key);
+        }
+        return output;
+    }
+    
+    public static String encVig(String mess, String alph, String keyw) {
+        String output = "";
+        int accum = 0;
+        for (int i = 0; i < mess.length(); i++) {
+            if (accum == keyw.length()) {
+                accum = 0;
+            }
+            output += offset(mess.charAt(i), alph, alph.indexOf(keyw.charAt(accum)));
+            accum++;
+        }
+        return output;
+    }
+    
+    public static String revAlph(String alph) {
+        String output = "";
+        for (int i = alph.length() - 1; i >= 0; i--) {
+            output += alph.charAt(i);
+        }
+        return output;
+    }
+    
+    public static String decCae(String mess, String alph, int key) {
+        String output = "";
+        String reverse = revAlph(alph);
+        for (int i = 0; i < mess.length(); i++) {
+            output += offset(mess.charAt(i), reverse, key);
+        }
+        return output;
+    }
+    
+    public static String decVig(String mess, String alph, String keyw) {
+        String output = "";
+        String reverse = revAlph(alph);
+        int accum = 0;
+        for (int i = 0; i < mess.length(); i++) {
+            if (accum >= keyw.length()) {
+                accum = 0;
+            }
+            output += offset(mess.charAt(i), reverse, alph.indexOf(keyw.charAt(accum)));
+            accum++;
+        }
+        return output;
+    }
+}
